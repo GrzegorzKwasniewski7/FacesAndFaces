@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  facesapi2:
+    image: ${DOCKER_REGISTRY-}facesapi2
+    build:
+      context: .
+      dockerfile: Faces/FacesApi2/Dockerfile
