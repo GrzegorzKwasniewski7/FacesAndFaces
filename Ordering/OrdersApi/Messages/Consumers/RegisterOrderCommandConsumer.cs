@@ -37,29 +37,36 @@ namespace OrdersApi.Messages.Consumers
 
         public async Task Consume(ConsumeContext<IRegisterOrderCommand> context)
         {
-            var result = context.Message;
-            if (result.OrderId != null
-                && result.UserEmail != null && result.ImageData != null)
+            try
             {
-                SaveOrder(result);
-                await _hubContext.Clients.All.SendAsync("UpdateOrders", "New Order Created", result.OrderId);
-
-
-                var client = _clientFactory.CreateClient();
-                Tuple<List<byte[]>, Guid> orderDetailData = await GetFacesFromFaceApiAsync(client, result.ImageData, result.OrderId);
-                List<byte[]> faces = orderDetailData.Item1;
-                Guid orderId = orderDetailData.Item2;
-                SaveOrderDetails(orderId, faces);
-                
-                await _hubContext.Clients.All.SendAsync("UpdateOrders", "Order Processed", result.OrderId);
-
-                await context.Publish<IOrderProcessedEvent>(new
+                var result = context.Message;
+                if (result.OrderId != null
+                    && result.UserEmail != null && result.ImageData != null)
                 {
-                    OrderId = orderId,
-                    result.UserEmail,
-                    Faces = faces,
-                    result.PictureUrl
-                });
+                    SaveOrder(result);
+                    await _hubContext.Clients.All.SendAsync("UpdateOrders", "New Order Created", result.OrderId);
+
+
+                    var client = _clientFactory.CreateClient();
+                    Tuple<List<byte[]>, Guid> orderDetailData = await GetFacesFromFaceApiAsync(client, result.ImageData, result.OrderId);
+                    List<byte[]> faces = orderDetailData.Item1;
+                    Guid orderId = orderDetailData.Item2;
+                    SaveOrderDetails(orderId, faces);
+
+                    await _hubContext.Clients.All.SendAsync("UpdateOrders", "Order Processed", result.OrderId);
+
+                    await context.Publish<IOrderProcessedEvent>(new
+                    {
+                        OrderId = orderId,
+                        result.UserEmail,
+                        Faces = faces,
+                        result.PictureUrl
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
 
         }

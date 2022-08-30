@@ -5,6 +5,7 @@ using Refit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -13,27 +14,23 @@ namespace Faces.WebMvc.RestClient
     public class OrderManagementApi : IOrderManagementApi
     {
         private IOrderManagementApi _restClient;
-        private readonly IOptions<AppSettings> _settings;
-
-        public OrderManagementApi(/*IConfiguration config,*/ HttpClient httpClient, IOptions<AppSettings> settings)
+        public OrderManagementApi(IConfiguration config, HttpClient httpClient)
         {
-            string apiHostAndPort = _settings.Value.OrdersApiUrl;
-                //config.GetSection("ApiServiceLocations").GetValue<string>("OrdersApiLocation");
+            string apiHostAndPort = config.GetSection("ApiServiceLocations").
+                GetValue<string>("OrdersApiLocation");
             httpClient.BaseAddress = new Uri($"http://{apiHostAndPort}/api");
             _restClient = RestService.For<IOrderManagementApi>(httpClient);
-            _settings = settings;
 
         }
-
         public async Task<OrderViewModel> GetOrderById(Guid orderId)
         {
             try
             {
                 return await _restClient.GetOrderById(orderId);
             }
-            catch(ApiException ex)
+            catch (ApiException ex)
             {
-                if(ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
                     return null;
                 }

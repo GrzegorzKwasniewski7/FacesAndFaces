@@ -22,6 +22,10 @@ using System.Threading.Tasks;
 
 namespace OrdersApi
 {
+    class MyConfiguration
+    {
+
+    }
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -75,7 +79,7 @@ namespace OrdersApi
 
                 }));
             });            
-            services.AddSingleton<IHostedService, BusService>();
+            services.AddSingleton<IHostedService, BusService>();            
 
             services.AddCors(options =>
             {
@@ -109,7 +113,7 @@ namespace OrdersApi
             app.UseRouting();
 
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
