@@ -119,6 +119,9 @@ namespace OrdersApi
                 endpoints.MapControllers();
                 endpoints.MapHub<OrderHub>("/orderhub");
             });
+
+            using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            scope.ServiceProvider.GetService<OrdersContext>().MigrateDB();
         }
     }
 }

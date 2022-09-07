@@ -6,3 +6,41 @@ services:
     build:
       context: .
       dockerfile: Faces/FacesApi2/Dockerfile
+
+
+  faces.webmvc:
+    image: ${DOCKER_REGISTRY-}faceswebmvc
+    build:
+      context: .
+      dockerfile: Faces.Web/Faces.WebMvc/Dockerfile
+    depends_on:
+     - rabbitmq
+     - ordersapi
+     
+
+
+  ordersapi:
+    image: ${DOCKER_REGISTRY-}ordersapi
+    build:
+      context: .
+      dockerfile: Ordering/OrdersApi/Dockerfile
+    depends_on:
+      - sqlserver
+      - rabbitmq
+      - facesapi2
+
+  sqldbservice:
+    image: mcr.microsoft.com/mssql/server:latest
+    container_name: sqlserver
+    environment:
+        ACCEPT_EULA: Y
+        SA_PASSWORD: "SomePassword10!"
+    ports:
+        - "1403:1433"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672

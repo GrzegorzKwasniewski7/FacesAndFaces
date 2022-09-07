@@ -3,12 +3,16 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>22cf0763-3ee7-42aa-8970-953ef3c5ea53</UserSecretsId>
+    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MassTransit" Version="7.3.0" />
     <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.0" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="7.3.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
     <PackageReference Include="Refit" Version="6.1.15" />
   </ItemGroup>
 
